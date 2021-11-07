@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wmazoni.hrpayroll.entities.Payment;
 import com.wmazoni.hrpayroll.services.PaymentService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 @RestController
 @RequestMapping(value = "/payments")
 public class PaymentResource {
@@ -26,6 +28,7 @@ public class PaymentResource {
 	private PaymentService paymentService;
 
 	//@HystrixCommand(fallbackMethod = "getPaymentAlternative")
+	@CircuitBreaker(name = "getPayment", fallbackMethod = "getPaymentAlternative")
 	@GetMapping(value = "/{workerId}/days/{days}")
 	public ResponseEntity<Payment> getPayment(@PathVariable Long workerId, @PathVariable Integer days) {
 		logger.info("PORT = " + env.getProperty("local.server.port"));
@@ -33,7 +36,7 @@ public class PaymentResource {
 		return ResponseEntity.ok(payment);
 	}
 
-	public ResponseEntity<Payment> getPaymentAlternative(Long workerId, Integer days) {
+	public ResponseEntity<Payment> getPaymentAlternative(Long workerId, Integer days, Exception e) {
 		Payment payment = new Payment("Brann", 400.0, days);
 		return ResponseEntity.ok(payment);
 	}
