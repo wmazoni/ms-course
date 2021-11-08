@@ -31,9 +31,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();
 	}
-	
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-	    http.authorizeRequests().antMatchers(HttpMethod.GET, "/users/search/**").permitAll();
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/users/search/**").permitAll().and().oauth2Client();
 	}
+
 }
